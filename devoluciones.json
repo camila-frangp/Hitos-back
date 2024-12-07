@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "id_venta": 1,
+        "id_producto": 1,
+        "cantidad": 1,
+        "fecha": "2021-10-01",
+        "motivo": "Producto defectuoso"
+    },
+    {
+        "id": 2,
+        "id_venta": 2,
+        "id_producto": 2,
+        "cantidad": 1,
+        "fecha": "2021-10-02",
+        "motivo": "Ya no lo necesito"
+    },
+    {
+        "id": 3,
+        "id_venta": 3,
+        "id_producto": 3,
+        "cantidad": 1,
+        "fecha": "2021-10-03",
+        "motivo": "Producto defectuoso"
+    }
+]
