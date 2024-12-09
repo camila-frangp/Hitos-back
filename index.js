@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const fs = require('fs')
 const jwt = require('jsonwebtoken');
+const {pruebas} = require('./consultas.js')
 
 app.listen(3001, console.log("¡Servidor encendido!"))
 
@@ -52,11 +53,16 @@ app.post('/login', (req, res) => {
 });
 
 app.get("/ventas", authenticateToken, (req, res) => {
-    const ventas = JSON.parse(fs.readFileSync("ventas.json"))
+    const ventas = JSON.parse(fs.readFileSync("./ventas/ventas.json"))
     res.json(ventas)
 })
 
 app.get("/devoluciones", authenticateToken, (req, res) => {
-    const devoluciones = JSON.parse(fs.readFileSync("devoluciones.json"))
+    const devoluciones = JSON.parse(fs.readFileSync("./ventas/devoluciones.json"))
     res.json(devoluciones)
 })
+
+app.get("/pruebas", (req, res) => {
+    pruebas()
+    res.send("Pruebas realizadas")
+});
