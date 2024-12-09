@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const fs = require('fs')
 const jwt = require('jsonwebtoken');
-const {pruebas} = require('./consultas.js')
+const {pruebas, obtenerVenta, agregarVenta} = require('./consultas.js')
 
 app.listen(3001, console.log("¡Servidor encendido!"))
 
@@ -65,4 +65,29 @@ app.get("/devoluciones", authenticateToken, (req, res) => {
 app.get("/pruebas", (req, res) => {
     pruebas()
     res.send("Pruebas realizadas")
+});
+
+
+app.get("/obtener-ventas/:id", (req, res) => {
+  obtenerVenta(req.params.id)
+  .then(venta => res.json(venta))
+  .catch(err => res.status(500).send('No se pudo obtener la venta'))
+});
+
+app.post("/agregar-venta", (req, res) => {
+  agregarVenta(req.body)
+  .then(venta => res.json(venta))
+  .catch(err => res.status(500).send('No se pudo agregar la venta'))
+});
+
+app.delete("/borrar-venta/:id", (req, res) => {
+  borrarVenta(req.params.id)
+  .then(() => res.send("Venta borrada"))
+  .catch(err => res.status(500).send('No se pudo borrar la venta'))
+});
+
+app.put("/actualizar-venta/:id", (req, res) => {
+  actualizarVenta(req.params.id, req.body)
+  .then(venta => res.json(venta))
+  .catch(err => res.status(500).send('No se pudo actualizar la venta'))
 });
