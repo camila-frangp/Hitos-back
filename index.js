@@ -68,6 +68,10 @@ app.get("/pruebas", (req, res) => {
 });
 
 
+app.get("/", (req, res) => {
+  res.send(res.statusCode);
+ });
+
 app.get("/obtener-ventas/:id", (req, res) => {
   obtenerVenta(req.params.id)
   .then(venta => res.json(venta))
