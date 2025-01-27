@@ -1,12 +1,14 @@
-const express = require('express')
-const app = express()
-const fs = require('fs')
+const express = require('express');
+const app = express();
+const ventasRoutes = require('./routes/ventasRoutes');
+const fs = require('fs');
 const jwt = require('jsonwebtoken');
-const {pruebas, obtenerVenta, agregarVenta} = require('./consultas.js')
 
-app.listen(3001, console.log("¡Servidor encendido!"))
+app.use(express.json());
 
- // Base de datos simulada de usuarios
+app.listen(3001, console.log("¡Servidor encendido!"));
+
+// Base de datos simulada de usuarios
 const users = [];
 
 // Middleware de autenticación
@@ -33,16 +35,16 @@ function authenticateToken(req, res, next) {
 
 // Ruta para registrarse
 app.post('/register', (req, res) => {
-  const username = req.body;
-  const password = req.body;
+  const username = req.body.username;
+  const password = req.body.password;
   users.push({ username, password });
   res.status(201).send('Usuario registrado');
 });
 
 // Ruta para iniciar sesión
 app.post('/login', (req, res) => {
-  const username = req.body;
-  const password = req.body;
+  const username = req.body.username;
+  const password = req.body.password;
   const user = users.find(u => u.username === username && u.password === password);
   if (user) {
     const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
@@ -52,46 +54,5 @@ app.post('/login', (req, res) => {
   }
 });
 
-app.get("/ventas", authenticateToken, (req, res) => {
-    const ventas = JSON.parse(fs.readFileSync("./ventas/ventas.json"))
-    res.json(ventas)
-})
-
-app.get("/devoluciones", authenticateToken, (req, res) => {
-    const devoluciones = JSON.parse(fs.readFileSync("./ventas/devoluciones.json"))
-    res.json(devoluciones)
-})
-
-app.get("/pruebas", (req, res) => {
-    pruebas()
-    res.send("Pruebas realizadas")
-});
-
-
-app.get("/", (req, res) => {
-  res.send(res.statusCode);
- });
-
-app.get("/obtener-ventas/:id", (req, res) => {
-  obtenerVenta(req.params.id)
-  .then(venta => res.json(venta))
-  .catch(err => res.status(500).send('No se pudo obtener la venta'))
-});
-
-app.post("/agregar-venta", (req, res) => {
-  agregarVenta(req.body)
-  .then(venta => res.json(venta))
-  .catch(err => res.status(500).send('No se pudo agregar la venta'))
-});
-
-app.delete("/borrar-venta/:id", (req, res) => {
-  borrarVenta(req.params.id)
-  .then(() => res.send("Venta borrada"))
-  .catch(err => res.status(500).send('No se pudo borrar la venta'))
-});
-
-app.put("/actualizar-venta/:id", (req, res) => {
-  actualizarVenta(req.params.id, req.body)
-  .then(venta => res.json(venta))
-  .catch(err => res.status(500).send('No se pudo actualizar la venta'))
-});
+app.use(authenticateToken);
+app.use('/', ventasRoutes);
