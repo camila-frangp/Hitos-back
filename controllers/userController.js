@@ -1,0 +1,56 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+const register = async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'El usuario ya existe' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    const token = jwt.sign({ id: newUser.id }, 'your_jwt_secret', {
+      expiresIn: '1h',
+    });
+
+    res.status(201).json({ token });
+  } catch (error) {
+    res.status(500).json({ message: 'Error en el servidor', error });
+  }
+};
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(401).json({ message: 'Credenciales inválidas' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Credenciales inválidas' });
+    }
+
+    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
+      expiresIn: '1h',
+    });
+
+    res.json({ token });
+  } catch (error) {
+    res.status(500).json({ message: 'Error en el servidor', error });
+  }
+};
+
+module.exports = { register, login };

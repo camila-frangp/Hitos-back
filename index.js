@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const ventasRoutes = require('./routes/ventasRoutes');
+const userRoutes = require('./routes/userRoutes');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
@@ -56,3 +57,4 @@ app.post('/login', (req, res) => {
 
 app.use(authenticateToken);
 app.use('/', ventasRoutes);
+app.use('/api/users', userRoutes);
