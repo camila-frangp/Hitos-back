@@ -1,11 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { logRequest, errorHandler } = require('./middlewares/middleware');
 const { obtenerVentas, obtenerVenta, agregarVenta, borrarVenta, actualizarVenta } = require('./models/ventasModel');
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
+
+app.use(logRequest);
+app.use(errorHandler);
 
 app.get('/ventas', async (req, res) => {
   const ventas = await obtenerVentas();

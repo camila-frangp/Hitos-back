@@ -1,11 +1,15 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 const app = express();
 const ventasRoutes = require('./routes/ventasRoutes');
 const userRoutes = require('./routes/userRoutes');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(cookieParser());
 
 app.listen(3001, console.log("¡Servidor encendido!"));
 
@@ -56,5 +60,5 @@ app.post('/login', (req, res) => {
 });
 
 app.use(authenticateToken);
-app.use('/', ventasRoutes);
+app.use('/ventas', ventasRoutes);
 app.use('/api/users', userRoutes);
